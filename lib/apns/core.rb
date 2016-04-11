@@ -9,9 +9,10 @@ module APNS
   @pem = nil # this should be the path of the pem file not the contentes
   @pass = nil
   @ssl_version = :TLSv1
+  @ciphers = ['DES-CBC3-SHA']
 
   class << self
-    attr_accessor :host, :pem, :port, :pass, :ssl_version
+    attr_accessor :host, :pem, :port, :pass, :ssl_version, :ciphers
   end
 
   def self.send_notification(device_token, message)
@@ -69,6 +70,7 @@ module APNS
     raise "The path to your pem file does not exist!" unless File.exist?(self.pem)
 
     context      = OpenSSL::SSL::SSLContext.new self.ssl_version
+    context.ciphers = self.ciphers
     context.cert = OpenSSL::X509::Certificate.new(File.read(self.pem))
     context.key  = OpenSSL::PKey::RSA.new(File.read(self.pem), self.pass)
 
@@ -84,6 +86,7 @@ module APNS
     raise "The path to your pem file does not exist!" unless File.exist?(self.pem)
 
     context      = OpenSSL::SSL::SSLContext.new self.ssl_version
+    context.ciphers = self.ciphers
     context.cert = OpenSSL::X509::Certificate.new(File.read(self.pem))
     context.key  = OpenSSL::PKey::RSA.new(File.read(self.pem), self.pass)
 
